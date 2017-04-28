@@ -184,28 +184,29 @@ As an example, a very basic method to visit all menu nodes in ascending order co
 
 ### Options.readMenuKeyFunc
 
-This property is expected to hold a function that has the following signature:  
-`Array function(Node, Options)`.
+This property is expected to hold a function that has the following signature:
+`Array function(Node, Options)`
 
 If this property is completely missing, a default reader function will be used.
 This default reader does some checking and only basic transformations on
-`file[menuKey]` values: convert to an array, `trim()` all values,
-convert `"N" (N in [0-9]*)` to numbers. Therefore, the default reader will best
-work with keys that follow the pattern: `[0-9]{1,*}(\.[0-9]{1,*})*`.
+`file[menuKey]` values: convert to an array, `trim()` all components,
+convert `"N"` to numbers, if the value matches `/[0-9]+/`. Therefore, the default
+reader will best work with keys that follow the pattern: `[0-9]{1,*}(\.[0-9]{1,*})*`.
 
-By specifying a custom reader function, it is possible to use keys like
+By writing a custom reader function, it is possible to use keys like
 "XIII" (roman letters), "Index A" or "Chapter 1". Such a function is expected to:
 
 - Transform `node.file[options.menuKey]` into a non-empty array:
-  - `node1.keyArray[i]` can be compared with `node2.keyArray[i]`
-  - `node1.keyArray[i]` won't be compared with `node2.keyArray[j]` with `i != j`
+  - `node1.keyArray[i]` can be compared with `node2.keyArray[i]`.
+    These comparisons will only be done between children of a single node.
+  - `node1.keyArray[i]` won't be compared with `node1.keyArray[j]` with `i != j`
 - Return the resulting array, don't just assign it to `node.keyArray`.
 - Return `undefined` if you choose to skip the current file (`node.file`).
 
 In the case that some pre-processing has already been done to turn all 
 `file[menuKey]` values into valid arrays, then undefine this property:
 i.e. `{... readMenuKeyFunc: undefined ...}`. This will tell the plugin to
-basically expect these arrays to be valid.
+basically expect these arrays to already have their final value/form.
 
 ## License
 
