@@ -13,8 +13,8 @@ npm install metalsmith-menu
 
 ## Overview
 
-At first you need to mark your files with some property. The easiest way to achieve
-this is to specify these using YAML frontmatter:
+At first you need to mark your files with some property. The easiest way to add
+them is to use YAML frontmatter:
 
 ```
 ---
@@ -47,26 +47,24 @@ Assuming you have the the following keys in use:
 ("1.txt", "1.1"), ("2.txt", "1.2"), ("3.txt", "1.2.3"), ("4.txt", "1.1"), ("5.txt", "2")
 ```
 
-- Notice that all keys must be fully qualified: There is no other way to specify
+- Notice: All keys must be fully qualified: It is not possible to assign
   "1.2.3" by omitting any prefix; e.g. "2.3" will always be attached to "2".
-- Notice that no file has key "1" assigned to it. As a result, the generation
-  of the menu tree is forced to include a dummy node. These can be easily detected
-  by testing the `node.file` properties.
-- Notice that "4.txt" reuses the key (i.e. "1.1") that is already used by "1.txt".
-  In other words: you will need to keep an eye open for such key collisions.
+- Notice: No file has key "1" assigned to it. As a result, the generation
+  of the menu tree is forced to include a dummy node (e.g. `[1]`). These can be
+  easily detected by testing the `node.file` properties.
+- Notice: "1.txt" and "4.txt" use the same key. In other words: This plugin
+  does not require that keys are unique. You will have to take care to not reuse
+  any keys.
 
-Once the plugin has created the menu tree and attached it to metalsmith's data,
-you can use these nodes to add:
+Once the plugin has created the menu tree and attached it to metalsmith's data
+objects, you can use it to create:
 
 - a sitemap.
-- a global menu - in order to display the first couple of levels
-  of the whole menu structure.
-- add breadcrumbs - in order to display how to reach the current
-  node (menu file) from the root.
-- add local menus - in order to display what the parent node is and what the
-  direct child nodes are.
+- a global menu - to display the first levels of the global menu structure.
+- breadcrumbs - to display how to reach the current node (menu file) from the root.
+- local menus - to display what the parent menu is and what the sub-menus are.
 
-You could even use the menu tree to merge all menu files into one large file.  
+You could even use the menu tree to combine all marked files into a single large file.  
 See the `./examples` sub-folder for more details.
 
 ## Usage
@@ -74,14 +72,14 @@ See the `./examples` sub-folder for more details.
 ```js
 const menu = require('metalsmith-menu');
 
-//- don't use any non-default values
+//- this will use only default options
 .use(menu())
 
 //- apply the given string value to
 //  .menuKey, .menuMetalsmith, .menuFile
 .use(menu("menu"))
 
-//- supply an object to use custom settings
+//- supply an object with custom settings
 .use(menu(options));
 ```
 
@@ -89,21 +87,21 @@ For `options` you only need to pass a simple javascript object that has the
 following properties (see `./lib/Options.js` for more details):
 
 ```js
-Options properties {
+Options {
   //- a multimatch pattern to select which files to process.
   //- files that don't match will be ignored.
   filter: "**",
   //- the name of the file property to read from.
-  //- files will be ignored, if file[menuKey] is missing.
+  //- files will be ignored if there is no such property.
   menuKey: "menu",
-  //- if file[menuKey] holds a string value, then
-  //  this setting defines which separator to use to
-  //  split that string into an array.
+  //- if file[menuKey] holds a string value, then this setting
+	//  defines which separator to use to split that value.
   menuKeySep: ".",
   //- to which metadata property to add the menu tree's root node.
+	//  i.e. metalsmith.metadata()[options.menuMetalsmith] = <menu-tree>
   menuMetalsmith: "menu",
   //- to which file property to add a file's menu tree node.
-  //- all file[menuKey] values will be replaced if
+  //- all file[menuKey] properties will be replaced if
   //  (options.menuKey == options.menuFile)!
   menuFile: "menu"
   //- a custom function used to read Node.file[menuKey]
@@ -118,14 +116,23 @@ metadata object (see `options.menuMetalsmith`) and/or each menu file (see
 `options.menuFile`). These objects have the following properties (see
 `./lib/Node.js` for more details):
 
+- Notice: If any property is missing (e.g. commented out), it's default value
+  will be used.
+- Notice: `metadata[menuMetalsmith]` and all `file[menuFile]` properties will
+  reference to different nodes of the same menu tree.
+- Notice: By letting the plugin run multiple times with different values for
+  `menuKey`, `menuMetalsmith` and `menuFile` it is possible to generate multiple
+  distinct menu trees.
+
 ```js
-Node properties {
+Node {
   //- undefined, or corresponds to files[i]
   //- e.g. one of your menu file is marked with "1.1", but none with "1";
-  //  in that case a node is generated for "1" with no file object attached to
+  //  in that case, a node is generated for "1" with no file object attached to
   //  it (i.e. undefined, aka dummy node).
   file: undefined,
-  //- undefined, or corresponds to the path of files[i]; i.e. the key of files[i]
+  //- undefined, or corresponds to the path of files[i]
+	//  i.e. the key of a file assigned to it by the files object
   //- e.g. files["test.txt"] = {...} will get you:
   //  node.file = {...}, node.path = "test.txt"
   path: undefined,
@@ -135,26 +142,26 @@ Node properties {
   //- the topmost node of the menu tree
   //- root.root = root (circular!)
   root: this,
-  //- undefined, or the next node when moving one step closer towards the root
+  //- undefined, or the next node when moving one step up towards the root
   parent: undefined,
   //- undefined, or the next sibling; same level, same parent
   next: undefined,
   //- undefined, or the previous sibling; same level, same parent
   previous: undefined,
   //- all direct child nodes of the current node
-  //- nodes in ascending order
+  //- nodes will be sorted in ascending order
   children: [ Node ],
-  //- all child nodes of the current subtree
-  //- nodes in ascending order
+  //- all child nodes of the current sub-tree
+  //- nodes will be sorted in ascending order
   childrenAll: [ Node ],
-  //- tells you how deep into the tree a node is located
+  //- how deep into the tree a node is located
   //- root.level = 0, node.level = node.parent.level + 1
-  //- same as keyArray.length
+  //- this value is identical to keyArray.length
   level: 0
 }
 ```
 
-A very basic method to visit all menu nodes in ascending order could be:
+As an example, a very basic method to visit all menu nodes in ascending order could be:
 
 ```js
 .use(function(files, metalsmith, done) {
@@ -164,11 +171,16 @@ A very basic method to visit all menu nodes in ascending order could be:
     console.log(node.keyArray.join('-'));
   });
 })
-```
 
-Notice, that the plugin can be used to produce different menu trees by letting
-it run multiple times, each time using different values for `menuKey`,
-`menuMetalsmith` and `menuFile`.
+//- assuming the menu tree from the above example,
+//  this will print the following lines:
+1
+1-1
+1-1
+1-2
+1-2-3
+2
+```
 
 ### Options.readMenuKeyFunc
 
