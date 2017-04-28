@@ -2,8 +2,11 @@
 metalsmith-menu
 ===============
 
-A [metalsmith](https://github.com/segmentio/metalsmith)
-plugin to read menu structures from simple frontmatter properties.
+This [Metalsmith](https://github.com/segmentio/metalsmith) plugin read a
+hierarchical menu structure from simple file properties and attaches it to
+Metalsmith's metadata and/or file objects. That structure can then be used to
+create a sitemap, a global menu, breadcrumbs, local menus or even to combine all
+files into a single large file.
 
 ## Installation
 
@@ -13,8 +16,8 @@ npm install metalsmith-menu
 
 ## Overview
 
-At first you need to mark your files with some property. The easiest way to add
-them is to use YAML frontmatter:
+At first you need to mark your files with some property. The easiest way to do
+this is to use YAML frontmatter:
 
 ```
 ---
@@ -84,7 +87,7 @@ const menu = require('metalsmith-menu');
 ```
 
 For `options` you only need to pass a simple javascript object that has the
-following properties (see `./lib/Options.js` for more details):
+following properties (see `./src/Options.js` for more details):
 
 ```js
 Options {
@@ -95,10 +98,10 @@ Options {
   //- files will be ignored if there is no such property.
   menuKey: "menu",
   //- if file[menuKey] holds a string value, then this setting
-	//  defines which separator to use to split that value.
+  //  defines which separator to use to split that value.
   menuKeySep: ".",
   //- to which metadata property to add the menu tree's root node.
-	//  i.e. metalsmith.metadata()[options.menuMetalsmith] = <menu-tree>
+  //  i.e. metalsmith.metadata()[options.menuMetalsmith] = <menu-tree>
   menuMetalsmith: "menu",
   //- to which file property to add a file's menu tree node.
   //- all file[menuKey] properties will be replaced if
@@ -111,11 +114,6 @@ Options {
 }
 ```
 
-Once the plugin has run, node objects will be attached to metalsmith's
-metadata object (see `options.menuMetalsmith`) and/or each menu file (see
-`options.menuFile`). These objects have the following properties (see
-`./lib/Node.js` for more details):
-
 - Notice: If any property is missing (e.g. commented out), it's default value
   will be used.
 - Notice: `metadata[menuMetalsmith]` and all `file[menuFile]` properties will
@@ -123,6 +121,11 @@ metadata object (see `options.menuMetalsmith`) and/or each menu file (see
 - Notice: By letting the plugin run multiple times with different values for
   `menuKey`, `menuMetalsmith` and `menuFile` it is possible to generate multiple
   distinct menu trees.
+
+Once the plugin has run, node objects will be attached to metalsmith's
+metadata object (see `options.menuMetalsmith`) and/or each menu file (see
+`options.menuFile`). These objects have the following properties (see
+`./src/Node.js` for more details):
 
 ```js
 Node {
@@ -132,7 +135,7 @@ Node {
   //  it (i.e. undefined, aka dummy node).
   file: undefined,
   //- undefined, or corresponds to the path of files[i]
-	//  i.e. the key of a file assigned to it by the files object
+  //  i.e. the key of a file assigned to it by the files object
   //- e.g. files["test.txt"] = {...} will get you:
   //  node.file = {...}, node.path = "test.txt"
   path: undefined,
@@ -161,7 +164,7 @@ Node {
 }
 ```
 
-As an example, a very basic method to visit all menu nodes in ascending order could be:
+A very basic method to visit all menu nodes in ascending is:
 
 ```js
 .use(function(files, metalsmith, done) {
@@ -191,17 +194,17 @@ If this property is completely missing, a default reader function will be used.
 This default reader does some checking and only basic transformations on
 `file[menuKey]` values: convert to an array, `trim()` all components,
 convert `"N"` to numbers, if the value matches `/[0-9]+/`. Therefore, the default
-reader will best work with keys that follow the pattern: `[0-9]{1,*}(\.[0-9]{1,*})*`.
+reader will best work with keys that follow the pattern: `[0-9]+(\.[0-9]+)*`.
 
 By writing a custom reader function, it is possible to use keys like
 "XIII" (roman letters), "Index A" or "Chapter 1". Such a function is expected to:
 
 - Transform `node.file[options.menuKey]` into a non-empty array:
-  - `node1.keyArray[i]` can be compared with `node2.keyArray[i]`.
+  - `node1.keyArray[i]` can be compared with `node2.keyArray[i]`.  
     These comparisons will only be done between children of a single node.
   - `node1.keyArray[i]` won't be compared with `node1.keyArray[j]` with `i != j`
-- Return the resulting array, don't just assign it to `node.keyArray`.
-- Return `undefined` if you choose to skip the current file (`node.file`).
+- Return the resulting array without assigning it to `node.keyArray`.
+- Return `undefined` if the decision has been made to skip the current file (`node.file`).
 
 In the case that some pre-processing has already been done to turn all 
 `file[menuKey]` values into valid arrays, then undefine this property:
