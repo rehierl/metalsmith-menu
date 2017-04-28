@@ -1,0 +1,4 @@
+---
+menu: "1.2"
+---
+contents of 2.txt
