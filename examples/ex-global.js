@@ -1,7 +1,8 @@
 
 "use strict";
 
-/* A basic example to show how to add a global menu to a menu file.
+/* 
+ * A basic example to show how to add a global menu to a menu file.
  * "global menu" as in a display of the first two levels of the menu tree.
  */
 

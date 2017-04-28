@@ -1,12 +1,13 @@
 
-/* global __dirname
+/* 
+ * global __dirname
  * Used to disable JsHint warning about __dirname being not declared.
  */
 
 "use strict";
 
 const metalsmith = require("metalsmith");
-const menu = require("../lib/index.js");
+const menu = require("../src/index.js");
 
 //========//========//========//========//========
 

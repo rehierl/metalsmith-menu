@@ -1,7 +1,8 @@
 
 "use strict";
 
-/* A basic example to show how to generate a global sitemap.
+/* 
+ * A basic example to show how to generate a global sitemap.
  */
 
 const util = require("util");

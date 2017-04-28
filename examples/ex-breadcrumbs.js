@@ -1,7 +1,8 @@
 
 "use strict";
 
-/* A basic example to show how to add breadcrumbs to each menu file.
+/* 
+ * A basic example to show how to add breadcrumbs to each menu file.
  */
 
 const util = require("util");

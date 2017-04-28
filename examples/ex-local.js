@@ -1,7 +1,8 @@
 
 "use strict";
 
-/* A basic example to show how to add a local menu to a menu file.
+/* 
+ * A basic example to show how to add a local menu to a menu file.
  * "local menu" as in a display of the previous upper and next child menu entries.
  */
 

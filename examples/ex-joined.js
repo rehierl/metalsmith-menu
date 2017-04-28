@@ -1,7 +1,8 @@
 
 "use strict";
 
-/* A basic example to show how to join all menu files into a single large file.
+/* 
+ * A basic example to show how to join all menu files into a single large file.
  * Keep in mind, that this example does not transform any references from one
  * menu file to another. If you had such references, you would have to transform
  * those into internal ones.

@@ -1,7 +1,8 @@
 
 "use strict";
 
-/* A basic example to show how to traverse the menu tree.
+/* 
+ * A basic example to show how to traverse the menu tree.
  * There are three methods to do this:
  * .visitLeafsFirst(), .visitInOrder(), .childrenAll[]
  */
