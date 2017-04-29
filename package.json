@@ -1,12 +1,12 @@
 {
   "name": "metalsmith-menu",
-  "version": "0.1",
+  "version": "1.0.0",
 	"main": "src/index.js",
   "homepage": "https://github.com/rehierl/metalsmith-menu",
-  "description": "A metalsmith plugin to read menu structures from simple frontmatter properties.",
+  "description": "A metalsmith plugin to read menu trees from frontmatter properties.",
   "author": "Reinhardt Hierl",
   "license": "MIT",
-  "keywords": [ "metalsmith", "menu" ],
+  "keywords": [ "metalsmith", "menu", "frontmatter" ],
   "bugs": {
     "url": "https://github.com/rehierl/metalsmith-menu/issues"
   },
