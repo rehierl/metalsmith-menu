@@ -32,22 +32,22 @@ module.exports = plugin;
  */
 function plugin(options) {
 	const settings = new Options();
-	let readFunc = undefined;
-	
-	//- set the default method to read file.menuKey values
-	settings.readMenuKeyFunc = readMenuKeyFuncDefault;
-	//- validate input options and use these to override the default ones
+	//- validate input options and use these to override the default values
 	//- this will also override .readMenuKeyFunc if the user specifies his own
 	//  reader function, or if he assigns undefined to that property
 	settings.combine(options);
 	
+	let readFunc = readMenuKeyFuncDefault;
 	
-	if(settings.readMenuKeyFunc !== undefined) {
-		readFunc = settings.readMenuKeyFunc;
-	} else {
-		//- if the user assigned undefined to .readMenuKeyFuc, then
-		//  do some basic checks but leave array components as they are
-		readFunc = readMenuKeyFuncLeaveAsIs;
+	if(settings.hasOwnProperty("readMenuKeyFunc")) {
+		if(settings.readMenuKeyFunc === undefined) {
+			//- this will do some basic checks,
+			//  but it will leave array components as they are
+			readFunc = readMenuKeyFuncAsIs;
+		} else {
+			//- use the user's custom reader function
+			readFunc = settings.readMenuKeyFunc;
+		}
 	}
 
 	/**
@@ -140,7 +140,7 @@ function plugin(options) {
  * or undefined if node.file has to be skipped/ignored
  * @throws {TypeError} - if node.file[options.menuKey] is not as expected
  */
-function readMenuKeyFuncLeaveAsIs(node, options) {
+function readMenuKeyFuncAsIs(node, options) {
 	let keyArray = node.file[options.menuKey];
 	
 	if(keyArray === undefined) {

@@ -210,6 +210,8 @@ Node.prototype.finalize = function () {
 		}
 
 		//- sort child nodes
+		//- a custom sort function does not make sense
+		//- see node.chilrenAll = concatenate all child.childrenAll arrays
 		children.sort(function (n1, n2) {
 			let k1 = n1.keyArray[level];
 			let k2 = n2.keyArray[level];

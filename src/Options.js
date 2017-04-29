@@ -48,16 +48,6 @@ function Options() {
 	//  and each part will be trimmed => ["", "1", "", "2", ""]
 	this.menuKeySep = ".";
 
-	//- a function that takes file[.menuKey] and
-	//  transforms it into an array of comparable values,
-	//  which it returns as it's result.
-	//- this means that a[i] can be compared with b[i];
-	//  this does not mean that a[i] can be compared with a[j], if i != j
-	//- expected signature: Array readMenuKeyFunc(node, options)
-	//- if this function returns undefined, the file will be ignored
-	//- if this setting is undefined, file[.menuKey] will be used as is
-	this.readMenuKeyFunc = undefined;
-
 	//- to which metalsmith metadata property to write the menu's root object/node
 	//- set undefined to skip this operation
 	this.menuMetalsmith = "menu";
@@ -67,6 +57,16 @@ function Options() {
 	//- this will replace the file metadata property if (.menuKey == .menuFile)
 	//- set undefined to skip this operation
 	this.menuFile = "menu";
+
+	//- a function that takes file[.menuKey] and
+	//  transforms it into an array of comparable values,
+	//  which it returns as it's result.
+	//- this means that a[i] can be compared with b[i];
+	//  this does not mean that a[i] can be compared with a[j], if i != j
+	//- expected signature: Array readMenuKeyFunc(node, options)
+	//- if this function returns undefined, the file will be ignored
+	//- if this setting is undefined, file[.menuKey] will be used as is
+	//this.readMenuKeyFunc = undefined;
 }
 
 //========//========//========//========//========//========//========//========
