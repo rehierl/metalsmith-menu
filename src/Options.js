@@ -63,10 +63,11 @@ function Options() {
 	//  which it returns as it's result.
 	//- this means that a[i] can be compared with b[i];
 	//  this does not mean that a[i] can be compared with a[j], if i != j
-	//- expected signature: Array readMenuKeyFunc(node, options)
-	//- if this function returns undefined, the file will be ignored
-	//- if this setting is undefined, file[.menuKey] will be used as is
-	//this.readMenuKeyFunc = undefined;
+	//- expected signature: Array readMenuKeyFunc(path, file, options)
+	//- if this function returns the value 'false', the file will be ignored
+	//- if this setting has the value 'false', file[.menuKey] will be used as is
+	//- if this setting evaluates to 'undefined', the default reader will be used
+	this.readMenuKeyFunc = undefined;
 }
 
 //========//========//========//========//========//========//========//========

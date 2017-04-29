@@ -51,8 +51,7 @@ Assuming you have used the following keys:
 
 ```
 //- read (path, key) as files[path].menu = key
-("1.txt", "1.1"), ("2.txt", "1.2"), ("3.txt", "1.2.3"), ("4.txt", "1.1"),
-("5.txt", "2")
+("1.txt", "1.1"), ("2.txt", "1.2"), ("3.txt", "1.2.3"), ("4.txt", "1.1"), ("5.txt", "2")
 ```
 
 When the plugin builds the tree, it starts at the root and fetches the key from
@@ -123,12 +122,13 @@ Options {
 
   //- a custom function used to read all file[menuKey]
   //- expected signature is: Array function(Node, Options)
-  //readMenuKeyFunc: <default reader function>,
+	//- see below for it's expected behavior
+  readMenuKeyFunc: <default reader function>,
 }
 ```
 
 - Notice: If any property is missing (e.g. commented out), then a default
-  value will be used. The above definition showcases the default values.
+  value will be used. The above definition showcases the values used by default.
 - Notice: metadata[menuMetalsmith] and all file[menuFile] properties will
   refer to different nodes of the same tree.
 - Notice: By letting the plugin run multiple times with different values for
@@ -185,7 +185,7 @@ Node {
 }
 ```
 
-A crude was to visit all menu nodes in ascending order is:
+A crude method to visit all menu nodes in ascending order is:
 
 ```js
 .use(function(files, metalsmith, done) {
@@ -203,33 +203,31 @@ A crude was to visit all menu nodes in ascending order is:
 
 ### Options.readMenuKeyFunc
 
-This property is expected to hold a function that has the following signature:
-`Array function(Node, Options)`
-
-If this property is not given, a default reader function will be used.
+If this property evaluates to `undefined`, a default reader function will be used.
 This default reader does some checking and only performs basic transformations
 on file[menuKey] values: (1) convert to an array (2) trim() all components
 (3) convert strings like `"N"` to numbers, if the value matches `/[0-9]+/`.
 Therefore, the default reader will best work with simple number sequences.
 
-By writing a custom reader function, it is possible to use keys that use complex
-compoents like "XIII" (roman letters), "Index A" or "Chapter 1". Such a custom
-reader functions are expected to:
+In the case that some pre-processing has already been done to turn all keys
+into valid arrays, set this property to `false`. This will tell the plugin
+to expect these arrays to already have their final value/form. The plugin will
+then do basic checks, but won't visit or alter any key components.
 
-- Transform node.file[options.menuKey] values into a non-empty arrays in a way
+For a custom reader, assign a function to this property that has the following
+signature: `Array function(Node, Options)`
+
+Such a custom reader functions are expected to:
+
+- Transform node.file[options.menuKey] values into non-empty arrays in a way
   that `node1.keyArray[i]` can be compared with `node2.keyArray[i]`. These
-  comparisons will only happen amongst children if they have the same parent
-  node. This means that you could use keys like: ["Chapter", 1] and ["Index", "IV"].
+  comparisons will only be done amongst children of the same node.
 - Return the resulting array without assigning it to node.keyArray.
-- Return `undefined` if it has decided to skip node.file.
+- If the reader returns `false`, node.file will be ignored.
 
-In the case that some pre-processing has already been done to turn all 
-file[menuKey] values into valid arrays, then use
-`{... readMenuKeyFunc: undefined ...}`. This will tell the plugin to
-basically expect these arrays to already have their final value/form.
-
-The most simplistic method to implement a custom reader would be to transform
-all key components into integer values.
+This will allow you to use keys that have complex components like "XIII" (roman
+letters), "Index A" or "Chapter 1". The most simplistic method to implement a
+custom reader would be to transform all key components into integer values.
 
 ## License
 

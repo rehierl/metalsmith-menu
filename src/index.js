@@ -37,17 +37,17 @@ function plugin(options) {
 	//  reader function, or if he assigns undefined to that property
 	settings.combine(options);
 	
-	let readFunc = readMenuKeyFuncDefault;
+	let readFunc = undefined;
 	
-	if(settings.hasOwnProperty("readMenuKeyFunc")) {
-		if(settings.readMenuKeyFunc === undefined) {
-			//- this will do some basic checks,
-			//  but it will leave array components as they are
-			readFunc = readMenuKeyFuncAsIs;
-		} else {
-			//- use the user's custom reader function
-			readFunc = settings.readMenuKeyFunc;
-		}
+	if(settings.readMenuKeyFunc === undefined) {
+		//- the user didn't choose anything, use the default reader
+		readFunc = readMenuKeyFuncDefault;
+	} else if(settings.readMenuKeyFunc === false) {
+		//- the keyArray properties need no further processing
+		readFunc = readMenuKeyFuncAsIs;
+	} else {
+		//- use the user's custom reader function
+		readFunc = settings.readMenuKeyFunc;
 	}
 
 	/**
@@ -74,17 +74,13 @@ function plugin(options) {
 				return;//- skip/ignore this file
 			}
 			
-			let node = new Node();
-			node.file = file;
-			node.path = current;
-			
 			//- transform file[menuKey] into an array of values
 			//- do not use any node properties to store values;
 			//  it might work, but it isn't guaranteed to always work.
 			//  see Node.js on dummy nodes
-			let result = readFunc(node, settings);
+			let result = readFunc(current, file, settings);
 			
-			if(result === undefined) {
+			if(result === false) {
 				//- the reader function's signal to not process this file
 				return;//- skip/ignore this file
 			}
@@ -93,6 +89,10 @@ function plugin(options) {
 				//- the reader function is expected to return a non-empty array
 				throw new TypeError("options.readMenuKeyFunc must return a non-empty array");
 			}
+			
+			let node = new Node();
+			node.file = file;
+			node.path = current;
 			
 			//- now, these arrays are expected as they are supposed to be
 			//- node1.keyArray[i] can be compared with node2.keyArray[i];
@@ -134,14 +134,15 @@ function plugin(options) {
  * - used as reader function if the user assigns undefined to .readMenukeyFunc;
  *   i.e. the property is defined, but it's value is undefined
  * 
- * @param {Node} node - a node from which to read node.file[options.menuKey]
+ * @param {String} path - the file's path taken from metalsmith's 'files' object
+ * @param {Object} file - the file's object taken from metalsmith's 'files' object
  * @param {Options} options - options from which to take .menuKey and .menuKeySep
  * @returns {Array|undefined} - the parsed node.file[options.menuKey] array,
  * or undefined if node.file has to be skipped/ignored
  * @throws {TypeError} - if node.file[options.menuKey] is not as expected
  */
-function readMenuKeyFuncAsIs(node, options) {
-	let keyArray = node.file[options.menuKey];
+function readMenuKeyFuncAsIs(path, file, options) {
+	let keyArray = file[options.menuKey];
 	
 	if(keyArray === undefined) {
 		return undefined;//- skip/ignore this file
@@ -169,14 +170,15 @@ function readMenuKeyFuncAsIs(node, options) {
  * - replaces any empty string array component by ""
  * - replaces any stringified integer array component by its number: "N" -> N
  * 
- * @param {Node} node - a node from which to read node.file[options.menuKey]
+ * @param {String} path - the file's path taken from metalsmith's 'files' object
+ * @param {Object} file - the file's object taken from metalsmith's 'files' object
  * @param {Options} options - options from which to take .menuKey and .menuKeySep
  * @returns {Array|undefined} - the parsed node.file[options.menuKey] array,
  * or undefined if node.file has to be skipped/ignored
  * @throws {TypeError} - if node.file[options.menuKey] is not as expected
  */
-function readMenuKeyFuncDefault(node, options) {
-	let keyArray = node.file[options.menuKey];
+function readMenuKeyFuncDefault(path, file, options) {
+	let keyArray = file[options.menuKey];
 	
 	if(keyArray === undefined) {
 		return undefined;//- skip/ignore this file
