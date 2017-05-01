@@ -19,7 +19,7 @@
     "url": "git://github.com/rehierl/metalsmith-menu.git"
   },
   "peerDependencies": {
-    "metalsmith": "^1.0.0"
+    "metalsmith": ">=1.0.0"
   },
   "dependencies": {
     "multimatch": "^2.1.0"
