@@ -226,7 +226,7 @@ Such a custom reader functions are expected to:
 - If the reader returns `false`, node.file will be ignored.
 
 This will allow you to use keys that have complex components like "XIII" (roman
-letters), "Index A" or "Chapter 1". The most simplistic method to implement a
+numbers), "Index A" or "Chapter 1". The most simplistic method to implement a
 custom reader would be to transform all key components into integer values.
 
 ## License
