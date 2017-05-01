@@ -23,5 +23,6 @@
   },
   "dependencies": {
     "multimatch": "^2.1.0"
-  }
+  },
+	"readme": "package.json's readme property value"	
 }
