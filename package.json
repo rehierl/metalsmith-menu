@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "0.0.1",
   "name": "metalsmith-menu",
   "description": "A metalsmith plugin to read menu trees from frontmatter properties.",
   "homepage": "https://github.com/rehierl/metalsmith-menu",
@@ -23,6 +23,5 @@
   },
   "dependencies": {
     "multimatch": "^2.1.0"
-  },
-	"readme": "package.json's readme property value"	
+  }
 }
