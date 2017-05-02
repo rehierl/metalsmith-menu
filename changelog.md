@@ -1,5 +1,5 @@
 
-1.0.1 / 2017-05-02
+1.0.2 / 2017-05-02
 ==================
 * updated the main readme to match the source; see parameters of
   options.readMenuKeyFunc, which changed from `(Node, Options)` to
