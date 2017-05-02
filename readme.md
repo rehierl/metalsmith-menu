@@ -215,7 +215,8 @@ to expect these arrays to already have their final value/form. The plugin will
 then do basic checks, but won't visit or alter any key components.
 
 For a custom reader, assign a function to this property that has the following
-signature: `Array function(path, file, Options)`
+signature:  
+`Array function(path, file, Options)`
 
 The basic behavior of such a reader function is:
 
@@ -227,7 +228,7 @@ function reader(path, file, options) {
   //- transform the key into an array of values in a way that
   //  node1.keyArray[i] can be compared with node2.keyArray[i] where
   //  (node1.parent === node2.parent).
-  //- e.g. if key is a string you would use
+  //- if key is a string you would probably use
   //  array = key.split(options.menuKeySep)
   var array = transform(key);
 
