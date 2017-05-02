@@ -32,7 +32,7 @@ could also use Javascript to assign keys.
 
 - Notice: The default reader function works best with simple integer sequences
   defined as above. Custom reader functions can be used to support more complex
-  components like roman letters. (see `Options.readMenuKeyFunc` for more details)
+  components like roman numbers. (see `Options.readMenuKeyFunc` for more details)
 
 Once the plugin runs, it reads these keys into a menu tree. As an example, such
 a tree could have the the following structure:
@@ -60,8 +60,8 @@ it with the first component of all child nodes that are already attached to the
 root. The plugin will add a new node if that component wasn't found. It will then
 use the new node, or the child node it found as new root.
 
-- Notice: No file has key "1" assigned to it. As a result, the generation of the
-  menu tree is forced to include a dummy node (e.g. `[1]`). These nodes can easily
+- Notice: No file has key "1" assigned to it. As a result, the algorithm used to
+  build the menu tree must add a dummy node (e.g. `[1]`). These nodes can easily
   be detected by testing the condition `(node.file === undefined)`.
 - Notice: Files "1.txt" and "4.txt" use the same key. In other words: This plugin
   does not require that keys are unique.
@@ -100,7 +100,7 @@ following properties (see `./src/Options.js` for more details):
 ```js
 Options {
   //- a multimatch pattern to select which files to process.
-	//- an array of patterns is supported.
+  //- an array of patterns is supported.
   //- files that don't match (any pattern) will be ignored.
   filter: "**",
 
@@ -121,16 +121,16 @@ Options {
   menuFile: "menu"
 
   //- a custom function used to read all file[menuKey]
-  //- expected signature is: Array function(Node, Options)
-	//- see below for it's expected behavior
-  readMenuKeyFunc: <default reader function>,
+  //- expected signature is: Array function(path, file, Options)
+  //- see below for it's expected behavior
+  readMenuKeyFunc: <reader function>,
 }
 ```
 
 - Notice: If any property is missing (e.g. commented out), then a default
   value will be used. The above definition showcases the values used by default.
 - Notice: metadata[menuMetalsmith] and all file[menuFile] properties will
-  refer to different nodes of the same tree.
+  refer to different nodes of the same menu tree.
 - Notice: By letting the plugin run multiple times with different values for
   menuKey, menuMetalsmith and menuFile it is possible to generate multiple
   distinct menu trees.
@@ -215,18 +215,33 @@ to expect these arrays to already have their final value/form. The plugin will
 then do basic checks, but won't visit or alter any key components.
 
 For a custom reader, assign a function to this property that has the following
-signature: `Array function(Node, Options)`
+signature:  
+`Array function(path, file, Options)`
 
-Such a custom reader functions are expected to:
+The basic behavior of such a reader function is:
 
-- Transform node.file[options.menuKey] values into non-empty arrays in a way
-  that `node1.keyArray[i]` can be compared with `node2.keyArray[i]`. These
-  comparisons will only be done amongst children of the same node.
-- Return the resulting array without assigning it to node.keyArray.
-- If the reader returns `false`, node.file will be ignored.
+```js
+function reader(path, file, options) {
+  //- access the file's key
+  var key = file[options.menuKey];
+
+  //- transform the key into an array of values in a way that
+  //  node1.keyArray[i] can be compared with node2.keyArray[i] where
+  //  (node1.parent === node2.parent).
+  //- if key is a string you would probably use
+  //  array = key.split(options.menuKeySep)
+  var array = transform(key);
+
+  if(file_should_be_ignored) {
+    return false;
+  } else {
+    return array;
+  }
+}
+```
 
 This will allow you to use keys that have complex components like "XIII" (roman
-letters), "Index A" or "Chapter 1". The most simplistic method to implement a
+numbers), "Index A" or "Chapter 1". The most simplistic method to implement a
 custom reader would be to transform all key components into integer values.
 
 ## License
