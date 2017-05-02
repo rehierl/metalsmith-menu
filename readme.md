@@ -226,8 +226,9 @@ function reader(path, file, options) {
   var key = file[options.menuKey];
 
   //- transform the key into an array of values in a way that
-  //  node1.keyArray[i] can be compared with node2.keyArray[i] where
-  //  (node1.parent === node2.parent).
+  //  node1.keyArray[i] can be compared with node2.keyArray[i],
+  //  which will only happen if (node1.parent === node2.parent)
+  //  and for (i === node1.parent.level).
   //- if key is a string you would probably use
   //  array = key.split(options.menuKeySep)
   var array = transform(key);
