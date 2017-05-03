@@ -197,10 +197,10 @@ A crude method to visit all menu nodes in ascending order is:
   const root = metadata.menu;
   
   root.childrenAll.forEach(function(node, index, array) {
-  //- assuming the menu tree from the above example,
-  //  this will print the following values
-  //  (one per line and in that order):
-  //  1, 1-1, 1-1, 1-2, 1-2-3, 2
+    //- assuming the menu tree from the above example,
+    //  this will print the following values
+    //  (one per line and in that order):
+    //  1, 1-1, 1-1, 1-2, 1-2-3, 2
     console.log(node.keyArray.join('-'));
   });
 })
