@@ -112,7 +112,8 @@ Options {
   //  defines which separator to use to split that value.
   menuKeySep: ".",
 
-  //- to which metadata property to attach the menu tree's root node.
+  //- to which metalsmith metadata property to attach the menu
+  //  tree's root node.
   menuMetalsmith: "menu",
 
   //- to which file property to attach a file's menu tree node.
@@ -142,9 +143,10 @@ object and/or each menu file. These objects have the following properties (see
 ```js
 Node {
   //- undefined, or corresponds to files[i]
-  //- e.g. one of your menu file is marked with "1.1", but none with "1";
-  //  in that case, a node is generated for "1" with no file object attached to
-  //  it (i.e. undefined, aka dummy node).
+  //- e.g. one of your menu file is marked with "1.1",
+  //  but none with "1"; in that case, a node is generated
+  //  for "1" with no file object attached to it
+  //  (i.e. undefined, aka dummy node).
   file: undefined,
 
   //- undefined, or corresponds to the path of files[i]
@@ -161,7 +163,8 @@ Node {
   //- root.root = root (circular!)
   root: this,
 
-  //- undefined, or the next node when moving one step up towards the root
+  //- undefined, or the next node when moving one step up
+  //  towards the root
   parent: undefined,
 
   //- undefined, or the next sibling; same level, same parent
@@ -181,6 +184,7 @@ Node {
   //- how deep into the tree a node is located
   //- root.level = 0, node.level = node.parent.level + 1
   //- this value is identical to keyArray.length
+  //  and thus is only added as a matter of convenience
   level: 0
 }
 ```
@@ -191,14 +195,15 @@ A crude method to visit all menu nodes in ascending order is:
 .use(function(files, metalsmith, done) {
   const metadata = metalsmith.metadata();
   const root = metadata.menu;
+  
   root.childrenAll.forEach(function(node, index, array) {
+  //- assuming the menu tree from the above example,
+  //  this will print the following values
+  //  (one per line and in that order):
+  //  1, 1-1, 1-1, 1-2, 1-2-3, 2
     console.log(node.keyArray.join('-'));
   });
 })
-
-//- assuming the menu tree from the above example,
-//  this will print the following values (one per line and in that order):
-1, 1-1, 1-1, 1-2, 1-2-3, 2
 ```
 
 ### Options.readMenuKeyFunc
@@ -229,6 +234,8 @@ function reader(path, file, options) {
   //  node1.keyArray[i] can be compared with node2.keyArray[i],
   //  which will only happen if (node1.parent === node2.parent)
   //  and for (i === node1.parent.level).
+  //- comparison will when sorting the children of a node and
+  //  using the '<' and '>' operators
   //- if key is a string you would probably use
   //  array = key.split(options.menuKeySep)
   var array = transform(key);
