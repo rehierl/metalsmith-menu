@@ -4,9 +4,10 @@ metalsmith-menu
 
 This [Metalsmith](https://github.com/segmentio/metalsmith) plugin reads a
 hierarchical menu structure from file properties and attaches it as a tree of
-nodes to Metalsmith's metadata and/or file data objects. That tree structure can
-then be used to create a sitemap, a global menu, breadcrumbs, local menus or
-even to merge all files into a single large file.
+nodes to Metalsmith's metadata and/or file data objects. In combination with a
+template engine you can then use this menu tree to create a sitemap, a global
+menu, breadcrumbs, local menus or even to merge all files into a single
+large file.
 
 ## Installation
 
@@ -67,7 +68,7 @@ use the new node, or the child node it found as new root.
   does not require that keys are unique.
 
 Once the plugin has built the menu tree and attached it to metalsmith's data
-objects, you can use it to create:
+objects, you can use it in combination with a template engine to create:
 
 - a sitemap.
 - a global menu - to display the first levels of the global menu structure.
@@ -76,7 +77,7 @@ objects, you can use it to create:
 
 You could even use the menu tree to merge all files into a single large file.
 
-See the `./examples` sub-folder for details.
+See the `./examples` sub-folder for details on how to traverse the menu tree.
 
 ## Usage
 
