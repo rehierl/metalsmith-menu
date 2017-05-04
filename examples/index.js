@@ -70,7 +70,7 @@ const msi = new metalsmith(basedir)
 //- require example modules
 const traversal = require("./ex-traversal.js");
 const sitemap = require("./ex-sitemap.js");
-const joined = require("./ex-joined.js");
+const merge = require("./ex-merge.js");
 const breadcrumbs = require("./ex-breadcrumbs.js");
 const local = require("./ex-local.js");
 const global = require("./ex-global.js");
@@ -81,7 +81,7 @@ msi
 //- use examples that act globally
 .use(traversal)
 .use(sitemap)
-.use(joined)
+.use(merge)
 
 //- use examples that act locally
 //  i.e. change the contents of each menu file
