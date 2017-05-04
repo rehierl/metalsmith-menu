@@ -1,5 +1,5 @@
 {
-  "version": "1.0.3",
+  "version": "1.0.4",
   "name": "metalsmith-menu",
   "description": "A metalsmith plugin to read menu trees from frontmatter properties.",
   "homepage": "https://github.com/rehierl/metalsmith-menu",
