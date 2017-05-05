@@ -77,7 +77,8 @@ objects, you can use it in combination with a template engine to create:
 
 You could even use the menu tree to merge all files into a single large file.
 
-See the `./examples` sub-folder for details on how to traverse the menu tree.
+See the `./examples` sub-folder in the plugin's github repository for details on
+how to traverse the menu tree.
 
 ## Usage
 
