@@ -2,12 +2,12 @@
 metalsmith-menu
 ===============
 
-This [Metalsmith](https://github.com/segmentio/metalsmith) plugin reads a
-hierarchical menu structure from file properties and attaches it as a tree of
-nodes to Metalsmith's metadata and/or file data objects. In combination with a
-template engine you can then use this menu tree to create a sitemap, a global
-menu, breadcrumbs, local menus or even to merge all files into a single
-large file.
+This Metalsmith ([npmjs](https://www.npmjs.com/package/metalsmith),
+[github](https://github.com/segmentio/metalsmith)) plugin reads a hierarchical
+menu structure from file properties and attaches it as a tree of nodes to
+Metalsmith's metadata and/or file data objects. In combination with a template
+engine you can then use this menu tree to create a sitemap, a global menu,
+breadcrumbs, local menus or even to merge all files into a single large file.
 
 ## Installation
 
