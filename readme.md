@@ -15,6 +15,10 @@ breadcrumbs, local menus or even to merge all files into a single large file.
 npm install metalsmith-menu
 ```
 
+## TODO
+
+- check if Node.path is implemented
+
 ## Overview
 
 At first you need to mark your files with some property. The easiest way to do
@@ -167,21 +171,21 @@ Node {
 
   //- undefined, or the next node when moving one step up
   //  towards the root
-  parent: undefined,
+  parent: Node?,
 
   //- undefined, or the next sibling; same level, same parent
-  next: undefined,
+  next: Node?,
 
   //- undefined, or the previous sibling; same level, same parent
-  previous: undefined,
+  previous: Node?,
 
   //- all direct child nodes of the current node
   //- nodes will be sorted in ascending order
-  children: [ Node ],
+  children: [ Node* ],
 
   //- all child nodes of the current sub-tree
   //- nodes will be sorted in ascending order
-  childrenAll: [ Node ],
+  childrenAll: [ Node* ],
 
   //- how deep into the tree a node is located
   //- root.level = 0, node.level = node.parent.level + 1

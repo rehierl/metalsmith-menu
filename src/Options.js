@@ -2,12 +2,13 @@
 "use strict";
 
 const is = require("is");
+const util = require("util");
 
 module.exports = Options;
 
 //========//========//========//========//========//========//========//========
 
-//metalsmith.files[file][options.menuKey]
+//file[options.menuKey]
 //- a file will not contribute to the menu, if such a property evaluates to false
 //  i.e. if(!file[options.menuKey]) then ignore
 //- can be a string - e.g. "1.2."
@@ -72,72 +73,96 @@ function Options() {
 
 //========//========//========//========//========//========//========//========
 
-Options.prototype.combine = function (userOptions) {
+Options.prototype.combine = function (options) {
   {//- acceptance of non-object arguments
     if (arguments.length === 0) {
       //- menu() => don't use any non-default options
-      userOptions = {};
-    } else if (is.string(userOptions)) {
+      options = {};
+    } else if (is.string(options)) {
       //- menu("value") => apply "value" to
       //  .menukey, .menuMetalsmith, .menuFile
-      userOptions = {
-        menuKey: userOptions,
-        menuMetalsmith: userOptions,
-        menuFile: userOptions
+      options = {
+        menuKey: options,
+        menuMetalsmith: options,
+        menuFile: options
       };
     }
   }
 
-  //- at this point, userOptions must be an object
-  if (!is.object(userOptions)) {
+  //- from now on options must be an object
+  if (!is.object(options)) {
     throw new TypeError("invalid options argument");
   }
 
-  {//- basic validation of userOptions
-    //- userOptions properties are tested if, and only if,
-    //  a property exists *and* if it's value is not undefined
-    let value = undefined;
-
-    value = userOptions.filter;
-    if ((value !== undefined) && !(is.string(value) || is.array(value))) {
-      throw new TypeError("options.filter must be a string or an array");
+  {//- do some basic validation of options
+    //- non-empty string values
+    ["menuKey", "menuKeySep", "menuMetalsmith", "menuFile"]
+    .forEach(function(current, index, array) {
+      if(options.hasOwnProperty(current)) {
+        if(!isString(options[current])) {
+          throw new Error(util.format(
+            "options.%s must be anon-empty string", current
+          ));
+        }
+      }
+    });
+    
+    let key = undefined;
+    
+    key = "filter";
+    if(options.hasOwnProperty(key)) {
+      if(!isString(options[key]) && !isStringArray(options[key])) {
+        throw new Error("options.filter must be a string or an array of strings");
+      }
     }
-
-    value = userOptions.menuKey;
-    if ((value !== undefined) && !is.string(value)) {
-      throw new TypeError("options.menuKey must be a string value");
-    }
-
-    value = userOptions.menuKeySep;
-    if ((value !== undefined) && !is.string(value)) {
-      throw new TypeError("options.menuKeySep must be a string value");
-    }
-
-    value = userOptions.readMenuKeyFunc;
-    if ((value !== undefined) && !is.fn(value)) {
-      throw new TypeError("options.readMenuKeyFunc must be a function");
-    }
-
-    value = userOptions.menuMetalsmith;
-    if ((value !== undefined) && !is.string(value)) {
-      throw new TypeError("options.menuMetalsmith must be a string value");
-    }
-
-    value = userOptions.menuFile;
-    if ((value !== undefined) && !is.string(value)) {
-      throw new TypeError("options.menuFile must be a string value");
+    
+    key = "readMenuKeyFunc";
+    if(options.hasOwnProperty(key)) {
+      if(!is.fn(options[key])) {
+        throw new Error("options.readMenuKeyFunc must be a function");
+      }
     }
   }
 
-  {//- override the default settings with the user's options
+  {//- override the default settings
     let thisInstance = this;
 
     Object.keys(this).forEach(function (current, index, array) {
-      //- if userOptions has a property, then use it's value;
-      //  whatever that may be - this includes 'undefined' values
-      if (userOptions.hasOwnProperty(current)) {
-        thisInstance[current] = userOptions[current];
+      //- if options has a property, then use it;
+      //  this includes 'undefined' values
+      if (options.hasOwnProperty(current)) {
+        thisInstance[current] = options[current];
       }
     });
   }
 };
+
+//========//========//========//========//========//========//========//========
+
+function isString(value) {
+  if(!is.string(value)) {
+    return false;
+  }
+  
+  if(value.trim().length === 0) {
+    return false;
+  }
+  
+  return true;
+}
+
+//========//========//========//========//========//========//========//========
+
+function isStringArray(value) {
+  if(!is.array(value)) {
+    return false;
+  }
+  
+  for(let ix=0, ic=value.length; ix<ic; ix++) {
+    if(!isString(value[ix])) {
+      return false;
+    }
+  }
+  
+  return true;
+}
