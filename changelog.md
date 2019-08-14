@@ -1,7 +1,7 @@
 
 2019-08-15
-* non-substantial edits in order to fix
-  a readme issue on github
+* non-substantial edits intended
+  to fix a readme issue on github
 
 2017-05-04 - 1.0.3, 1.0.4
 * readme clarification
