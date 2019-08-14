@@ -57,7 +57,7 @@ function Node() {
   //- may contain empty dummy nodes
   //- warning - this could cause memory issues
   this.childrenAll = [];
-  
+
   //- reflects how deep into the tree a node is located
   //- root.level = 0
   //- node.level = node.parent.level + 1
@@ -82,7 +82,7 @@ Node.prototype.addNode = function (node) {
     let key = node.keyArray[level];
     let child = undefined;
     let ix = 0;
-    
+
     while(ix < ic) {
       child = parent.children[ix];
       if (child.keyArray[level] === key) {
@@ -90,7 +90,7 @@ Node.prototype.addNode = function (node) {
       }
       ix = ix + 1;
     }
-    
+
     if(ix >= ic) {//- key not found
       //- if(node must be added deeper into the tree)
       //- key was not found, so add a dummy node
@@ -150,21 +150,21 @@ Node.prototype.addNode = function (node) {
 Node.prototype.visitLeafsFirst = function (visitCallback) {
   let reversedOrder = [ this.root ];
   let ix = 0;
-  
+
   while(ix < reversedOrder.length) {
     let node = reversedOrder[ix];
     let jc = node.children.length;
-    
+
     for(let jx=0; jx<jc; jx++) {
       let child = node.children[jx];
       reversedOrder.push(child);
     }
-    
+
     ix = ix + 1;
   }
-  
+
   ix = ix - 1;
-  
+
   while(ix >= 0) {
     let node = reversedOrder[ix];
     visitCallback(node);
@@ -180,14 +180,14 @@ Node.prototype.visitLeafsFirst = function (visitCallback) {
 //- this traversal method will visit the root node
 Node.prototype.visitInOrder = function (visitCallback) {
   let next = [ this.root ];
-  
+
   while(next.length > 0) {
     let node = next.pop();
     let children = node.children;
     let ic = children.length;
-    
+
     visitCallback(node);
-    
+
     for(let ix=ic-1; ix>=0; ix--) {
       let child = children[ix];
       next.push(child);
@@ -201,10 +201,10 @@ Node.prototype.finalize = function () {
   this.visitLeafsFirst(function(node) {
     let children = node.children;
     let ic = children.length;
-    
+
     let level = node.keyArray.length;
     node.level = level;
-    
+
     if(ic === 0) {
       return;
     }
@@ -215,15 +215,15 @@ Node.prototype.finalize = function () {
     children.sort(function (n1, n2) {
       let k1 = n1.keyArray[level];
       let k2 = n2.keyArray[level];
-      
+
       if (k1 < k2) {
         return -1;
       }
-      
+
       if (k1 > k2) {
         return +1;
       }
-      
+
       //- if(k1 == k2)
       return 0;
     });
@@ -233,7 +233,7 @@ Node.prototype.finalize = function () {
       children[ix - 1].next = children[ix];
       children[ix].previous = children[ix - 1];
     }
-    
+
     let nodeArray = node.childrenAll;
 
     //- fill node.childrenAll
@@ -241,7 +241,7 @@ Node.prototype.finalize = function () {
       let child = children[ix];
       let childArray = child.childrenAll;
       let jc = childArray.length;
-      
+
       nodeArray.push(child);
 
       for (let jx = 0; jx < jc; jx++) {

@@ -14,7 +14,7 @@ module.exports = plugin;
 
 /**
  * the plugin's constructor function.
- * 
+ *
  * @param {Options} options - see ./Options.js for a detailed description
  *   @property {string} filter - a multimatch pattern used to filter file objects.
  *   defaults to "**".
@@ -36,9 +36,9 @@ function plugin(options) {
   //- this will also override .readMenuKeyFunc if the user specifies his own
   //  reader function, or if he assigns undefined to that property
   settings.combine(options);
-  
+
   let readFunc = undefined;
-  
+
   if(settings.readMenuKeyFunc === undefined) {
     //- the user didn't choose anything, use the default reader
     readFunc = readMenuKeyFuncDefault;
@@ -52,7 +52,7 @@ function plugin(options) {
 
   /**
    * the plugin's worker function.
-   * 
+   *
    * @param {object} files - metalsmith's file's container
    * @param {object} metalsmith - metalsmith's main object
    * @param {Function} done - when finished, execute done() to not block the
@@ -61,25 +61,25 @@ function plugin(options) {
    */
   return function main(files, metalsmith, done) {
     const root = new Node();
-    
+
     let keys = Object.keys(files);
     multimatch(keys, settings.filter)
     .forEach(function (current, index, array) {
       //- you can't assume that file1 is processed before file2
       //- don't make any assumptions about the order
       var file = files[current];
-      
+
       if( !file.hasOwnProperty(settings.menuKey)) {
         //- this file doesn't have the .menuKey property
         return;//- skip/ignore this file
       }
-      
+
       //- transform file[menuKey] into an array of values
       //- do not use any node properties to store values;
       //  it might work, but it isn't guaranteed to always work.
       //  see Node.js on dummy nodes
       let result = readFunc(current, file, settings);
-      
+
       if(result === false) {
         //- the reader function's signal to not process this file
         return;//- skip/ignore this file
@@ -89,17 +89,17 @@ function plugin(options) {
         //- the reader function is expected to return a non-empty array
         throw new TypeError("options.readMenuKeyFunc must return a non-empty array");
       }
-      
+
       let node = new Node();
       node.file = file;
       node.path = current;
-      
+
       //- now, these arrays are expected as they are supposed to be
       //- node1.keyArray[i] can be compared with node2.keyArray[i];
       //  that doesn't mean that node.keyArray[i] can/will be
       //  compared with node.keyArray[k], where i != k
       node.keyArray = result;
-      
+
       //- add this node/file to the structure
       //- the input argument won't necessarily be added to the tree.
       //  the node returned will be part of the tree and is associated with
@@ -113,7 +113,7 @@ function plugin(options) {
         file[settings.menuFile] = node;
       }
     });
-    
+
     //- no more nodes to add, so finalize the structure
     //- sort child nodes, update .next, .previous and .childrenAll
     root.finalize();
@@ -133,7 +133,7 @@ function plugin(options) {
 /**
  * - used as reader function if the user assigns undefined to .readMenukeyFunc;
  *   i.e. the property is defined, but it's value is undefined
- * 
+ *
  * @param {String} path - the file's path taken from metalsmith's 'files' object
  * @param {Object} file - the file's object taken from metalsmith's 'files' object
  * @param {Options} options - options from which to take .menuKey and .menuKeySep
@@ -143,19 +143,19 @@ function plugin(options) {
  */
 function readMenuKeyFuncAsIs(path, file, options) {
   let keyArray = file[options.menuKey];
-  
+
   if(keyArray === undefined) {
     return undefined;//- skip/ignore this file
   }
-  
+
   if (!is.array(keyArray)) {
     throw new TypeError("invalid file.menuKey value");
   }
-  
+
   if (keyArray.length === 0) {
     throw new TypeError("file.menuKey array must not be empty");
   }
-  
+
   return keyArray;
 }
 
@@ -169,7 +169,7 @@ function readMenuKeyFuncAsIs(path, file, options) {
  * - use trim() on any string array component
  * - replaces any empty string array component by ""
  * - replaces any stringified integer array component by its number: "N" -> N
- * 
+ *
  * @param {String} path - the file's path taken from metalsmith's 'files' object
  * @param {Object} file - the file's object taken from metalsmith's 'files' object
  * @param {Options} options - options from which to take .menuKey and .menuKeySep
@@ -179,23 +179,23 @@ function readMenuKeyFuncAsIs(path, file, options) {
  */
 function readMenuKeyFuncDefault(path, file, options) {
   let keyArray = file[options.menuKey];
-  
+
   if(keyArray === undefined) {
     return undefined;//- skip/ignore this file
   }
-  
+
   if (is.string(keyArray)) {
     keyArray = keyArray.split(options.menuKeySep);
   }
-  
+
   if (!is.array(keyArray)) {
     throw new TypeError("invalid file.menuKey value");
   }
-  
+
   if (keyArray.length === 0) {
     throw new TypeError("file.menuKey array must not be empty");
   }
-  
+
   keyArray.forEach(function(current, index, array) {
     if (!is.primitive(current)) {
       //- object, functions, arrays won't be accepted

@@ -1,7 +1,7 @@
 
-/* 
+/*
  * global __dirname
- * Used to disable JsHint warning about __dirname being not declared.
+ * Used to disable JsHint warning about __dirname not being declared.
  */
 
 "use strict";

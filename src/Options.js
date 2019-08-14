@@ -106,16 +106,16 @@ Options.prototype.combine = function (options) {
         }
       }
     });
-    
+
     let key = undefined;
-    
+
     key = "filter";
     if(options.hasOwnProperty(key)) {
       if(!isString(options[key]) && !isStringArray(options[key])) {
         throw new Error("options.filter must be a string or an array of strings");
       }
     }
-    
+
     key = "readMenuKeyFunc";
     if(options.hasOwnProperty(key)) {
       if(!is.fn(options[key])) {
@@ -143,11 +143,11 @@ function isString(value) {
   if(!is.string(value)) {
     return false;
   }
-  
+
   if(value.trim().length === 0) {
     return false;
   }
-  
+
   return true;
 }
 
@@ -157,12 +157,12 @@ function isStringArray(value) {
   if(!is.array(value)) {
     return false;
   }
-  
+
   for(let ix=0, ic=value.length; ix<ic; ix++) {
     if(!isString(value[ix])) {
       return false;
     }
   }
-  
+
   return true;
 }
